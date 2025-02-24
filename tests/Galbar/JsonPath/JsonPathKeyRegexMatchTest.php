@@ -17,14 +17,15 @@
 
 namespace Tests;
 
-use JsonPath\JsonObject;
 use JsonPath\InvalidJsonException;
+use JsonPath\JsonObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class JsonPathKeyRegexMatchTest
  * @author Vlad Proshin
  */
-class JsonPathKeyRegexMatchTest extends \PHPUnit_Framework_TestCase
+class JsonPathKeyRegexMatchTest extends TestCase
 {
     private $json = '
 {
@@ -133,87 +134,6 @@ class JsonPathKeyRegexMatchTest extends \PHPUnit_Framework_TestCase
     /**
      * @throws InvalidJsonException
      */
-    public function testRootObjectKeyMatch()
-    {
-        $jsonPath = '$[?(/^sto?re+$/)].bicycle.price';
-        $jsonObject = new JsonObject($this->json);
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            [19.95],
-            $result
-        );
-
-        $jsonPath = '$[?(/\-link$/)].*.placed-at';
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals([
-                "wikipedia",
-                "britannica",
-                "britannica",
-                "tolkiensociety"
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @throws InvalidJsonException
-     */
-    public function testRootArrayKeyMatch()
-    {
-        $jsonPath = '$[?(/auth.*s$/)]';
-        $jsonObject = new JsonObject($this->json);
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals([
-                [
-                    "Nigel Rees",
-                    "Evelyn Waugh",
-                    "Herman Melville",
-                    "J. R. R. Tolkien"
-                ]
-            ],
-            $result
-        );
-
-        $jsonPath = '$[?(/^\w*\-biography$/)]..*.age';
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            [78],
-            $result
-        );
-    }
-
-    /**
-     * @throws InvalidJsonException
-     */
-    public function testNestedObjectKeyMatch()
-    {
-        $jsonPath = '$..*[?(/^\w*[^-]cycle$/)].color';
-        $jsonObject = new JsonObject($this->json);
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            ["red", "blue"],
-            $result
-        );
-
-        $jsonPath = '$.*[?(/^[A-Z]erman\sMelvil{2}e$/)].href';
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            ["https://www.britannica.com/biography/Herman-Melville"],
-            $result
-        );
-
-        $jsonPath = '$.*[?(/^[A-Z]erman\sMelvil{2}e$/)][0]';
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            [],
-            $result
-        );
-    }
-
-
-    /**
-     * @throws InvalidJsonException
-     */
     public function testNestedArrayKeyMatch()
     {
         $jsonPath = '$.*[?(/^bo{2}k$/)][*].isbn';
@@ -249,21 +169,27 @@ class JsonPathKeyRegexMatchTest extends \PHPUnit_Framework_TestCase
     /**
      * @throws InvalidJsonException
      */
-    public function testRecursiveKeyMatch()
+    public function testNestedObjectKeyMatch()
     {
-        $jsonPath = '$..*[?(/^author|age|died$/)]';
+        $jsonPath = '$..*[?(/^\w*[^-]cycle$/)].color';
         $jsonObject = new JsonObject($this->json);
         $result = $jsonObject->get($jsonPath);
-        $this->assertEquals([
-                "Nigel Rees",
-                "Evelyn Waugh",
-                "Herman Melville",
-                "J. R. R. Tolkien",
-                78,
-                "10 April 1966",
-                "September 28, 1891",
-                "2 September 1973"
-            ],
+        $this->assertEquals(
+            ["red", "blue"],
+            $result
+        );
+
+        $jsonPath = '$.*[?(/^[A-Z]erman\sMelvil{2}e$/)].href';
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            ["https://www.britannica.com/biography/Herman-Melville"],
+            $result
+        );
+
+        $jsonPath = '$.*[?(/^[A-Z]erman\sMelvil{2}e$/)][0]';
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [],
             $result
         );
     }
@@ -313,6 +239,83 @@ class JsonPathKeyRegexMatchTest extends \PHPUnit_Framework_TestCase
         $result = $jsonObject->get($jsonPath);
         $this->assertEquals(
             ["https://www.tolkiensociety.org/author/biography/"],
+            $result
+        );
+    }
+
+    /**
+     * @throws InvalidJsonException
+     */
+    public function testRecursiveKeyMatch()
+    {
+        $jsonPath = '$..*[?(/^author|age|died$/)]';
+        $jsonObject = new JsonObject($this->json);
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [
+                "Nigel Rees",
+                "Evelyn Waugh",
+                "Herman Melville",
+                "J. R. R. Tolkien",
+                78,
+                "10 April 1966",
+                "September 28, 1891",
+                "2 September 1973"
+            ],
+            $result
+        );
+    }
+
+    /**
+     * @throws InvalidJsonException
+     */
+    public function testRootArrayKeyMatch()
+    {
+        $jsonPath = '$[?(/auth.*s$/)]';
+        $jsonObject = new JsonObject($this->json);
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [
+                [
+                    "Nigel Rees",
+                    "Evelyn Waugh",
+                    "Herman Melville",
+                    "J. R. R. Tolkien"
+                ]
+            ],
+            $result
+        );
+
+        $jsonPath = '$[?(/^\w*\-biography$/)]..*.age';
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [78],
+            $result
+        );
+    }
+
+    /**
+     * @throws InvalidJsonException
+     */
+    public function testRootObjectKeyMatch()
+    {
+        $jsonPath = '$[?(/^sto?re+$/)].bicycle.price';
+        $jsonObject = new JsonObject($this->json);
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [19.95],
+            $result
+        );
+
+        $jsonPath = '$[?(/\-link$/)].*.placed-at';
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [
+                "wikipedia",
+                "britannica",
+                "britannica",
+                "tolkiensociety"
+            ],
             $result
         );
     }

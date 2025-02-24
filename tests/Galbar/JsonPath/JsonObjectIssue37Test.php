@@ -17,15 +17,14 @@
 
 namespace Tests;
 
-use JsonPath\InvalidJsonException;
-use JsonPath\InvalidJsonPathException;
 use JsonPath\JsonObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class JsonObjectTest
  * @author Alessio Linares
  */
-class JsonObjectIssue37Test extends \PHPUnit_Framework_TestCase
+class JsonObjectIssue37Test extends TestCase
 {
     public function testCase1()
     {
@@ -47,7 +46,7 @@ class JsonObjectIssue37Test extends \PHPUnit_Framework_TestCase
     {
         $jsonObject = new JsonObject('[{"key": 0}, {"key": 42}, {"key": -1}, {"key": 41}, {"key": 43}, {"key": 42.0001}, {"key": 41.9999}, {"key": 100}, {"some": "value"}]');
         $result = $jsonObject->get('$[?(@.key<42)]');
-        $expected = [["key"=> 0], ["key"=> -1], ["key"=> 41], ["key"=> 41.9999]];
+        $expected = [["key" => 0], ["key" => -1], ["key" => 41], ["key" => 41.9999]];
         $this->assertEquals($expected, $result);
     }
 
@@ -55,20 +54,20 @@ class JsonObjectIssue37Test extends \PHPUnit_Framework_TestCase
     {
         $jsonObject = new JsonObject('{"key": "value", "another key": {"complex": "string", "primitives": [0, 1]}}');
         $result = $jsonObject->get('$..*');
-        $expected = array (
+        $expected = [
             "value",
-            array (
-                "complex"=> "string",
-                "primitives" => array(
+            [
+                "complex" => "string",
+                "primitives" => [
                     0,
                     1
-                )
-            ),
+                ]
+            ],
             "string",
-            array(0, 1),
+            [0, 1],
             0,
             1
-        );
+        ];
         $this->assertEquals($expected, $result);
     }
 
@@ -76,11 +75,11 @@ class JsonObjectIssue37Test extends \PHPUnit_Framework_TestCase
     {
         $jsonObject = new JsonObject('[40, null, 42]');
         $result = $jsonObject->get('$..*');
-        $expected = array(
+        $expected = [
             40,
             null,
             42
-        );
+        ];
         $this->assertEquals($expected, $result);
     }
 

@@ -39,6 +39,7 @@ class Regex
     const EXPR_REGEX = '/^\/.*\/i?x?$/';
     const BINOP_COMP = '/^(.+)\s*(==|!=|<=|>=|<|>|=\~)\s*(.+)$/';
     const BINOP_IN_ARRAY = '/^(.+)\s*in\s*\[(.+)\]$/';
+    const BINOP_CONTAINS = '/^(.+)\s*contains\s*(.+)$/';
     const BINOP_OR = '/\s+(or|\|\|)\s+/';
     const BINOP_AND = '/\s+(and|&&)\s+/';
     const OP_NOT = '/^(not|!)\s+(.*)/';

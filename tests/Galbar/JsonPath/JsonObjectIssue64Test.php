@@ -17,17 +17,15 @@
 
 namespace Tests;
 
-use JsonPath\InvalidJsonException;
-use JsonPath\InvalidJsonPathException;
 use JsonPath\JsonObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class JsonObjectTest
  * @author Alessio Linares
  */
-class JsonObjectIssue64Test extends \PHPUnit_Framework_TestCase
+class JsonObjectIssue64Test extends TestCase
 {
-
     private $json = '
 {
   "success": true,

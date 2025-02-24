@@ -128,6 +128,8 @@ comp        = value ('==' | '!=' | '<' | '>' | '<=' | '>=' | '=~') value
 value       = (jsonpath | childpath | number | string | boolean | regpattern | null | length)
 length      = (jsonpath | childpath) '.length'
 in_array    = value 'in' '[' value (',' value)* ']'
+contains    = value 'contains' value
+contains    = value 'contains' '[' value (',' value)* ']'
 ```
 
 ¹`var_name`: the regex roughly translates to "any valid JavaScript variable

@@ -17,14 +17,15 @@
 
 namespace Tests;
 
-use JsonPath\JsonObject;
 use JsonPath\InvalidJsonException;
+use JsonPath\JsonObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class JsonObjectLengthOperatorTest
  * @author Sergey Nikolaev
  */
-class JsonObjectLengthOperatorTest extends \PHPUnit_Framework_TestCase
+class JsonObjectLengthOperatorTest extends TestCase
 {
     private $json = '{
         "music": {
@@ -85,126 +86,6 @@ class JsonObjectLengthOperatorTest extends \PHPUnit_Framework_TestCase
             ]
         }
     }';
-
-    /**
-     * @throws InvalidJsonException
-     */
-    public function testObjectHasField()
-    {
-        $jsonPath = '$.music.length';
-        $jsonObject = new JsonObject($this->json);
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals([
-                [
-                    [
-                        'track' => 'Simple Thing',
-                        'stack' => 80
-                    ],
-                    [
-                        'track' => 'Nobody',
-                        'stack' => 90
-                    ]
-                ]
-            ],
-            $result
-        );
-
-        $jsonPath = '$.music.bands[0].albums[0].length';
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            [
-                '46:35'
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @throws InvalidJsonException
-     */
-    public function testIntermediateLength()
-    {
-        $jsonPath = '$.music.length[0].track';
-        $jsonObject = new JsonObject($this->json);
-        $result = $jsonObject->get($jsonPath);
-
-        $this->assertEquals(
-            [
-                'Simple Thing'
-            ],
-            $result
-        );
-
-
-        $jsonPath = '$.music.length[1].stack';
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            [
-                90
-            ],
-            $result
-        );
-    }
-
-    /**
-     * @throws InvalidJsonException
-     */
-    public function testLength()
-    {
-        /** Array Length Test */
-        $jsonPath = '$.music.bands[0].albums.length';
-        $jsonObject = new JsonObject($this->json);
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            [3],
-            $result
-        );
-
-        /** String Length Test */
-        $jsonPath = '$.music.bands[0].albums[0].length.length';
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            [5],
-            $result
-        );
-
-        $jsonPath = '$.music.bands[0].albums[1].title.length';
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            [6],
-            $result
-        );
-    }
-
-    /**
-     * @throws InvalidJsonException
-     */
-    public function testLengthSmartGet()
-    {
-        /** Array Length Test */
-        $jsonPath = '$.music.bands[0].albums.length';
-        $jsonObject = new JsonObject($this->json, true);
-        $result = $jsonObject->get($jsonPath);
-        $this->assertEquals(
-            3,
-            $result
-        );
-
-        /** String Length Test */
-        $jsonPath = '$.music.bands[0].albums[0].length.length';
-        $result = $jsonObject->get($jsonPath, true);
-        $this->assertEquals(
-            5,
-            $result
-        );
-
-        $jsonPath = '$.music.bands[0].albums[1].title.length';
-        $result = $jsonObject->get($jsonPath, true);
-        $this->assertEquals(
-            6,
-            $result
-        );
-    }
 
     /**
      * @throws InvalidJsonException
@@ -317,6 +198,126 @@ class JsonObjectLengthOperatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @throws InvalidJsonException
+     */
+    public function testIntermediateLength()
+    {
+        $jsonPath = '$.music.length[0].track';
+        $jsonObject = new JsonObject($this->json);
+        $result = $jsonObject->get($jsonPath);
+
+        $this->assertEquals(
+            [
+                'Simple Thing'
+            ],
+            $result
+        );
+
+        $jsonPath = '$.music.length[1].stack';
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [
+                90
+            ],
+            $result
+        );
+    }
+
+    /**
+     * @throws InvalidJsonException
+     */
+    public function testLength()
+    {
+        /** Array Length Test */
+        $jsonPath = '$.music.bands[0].albums.length';
+        $jsonObject = new JsonObject($this->json);
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [3],
+            $result
+        );
+
+        /** String Length Test */
+        $jsonPath = '$.music.bands[0].albums[0].length.length';
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [5],
+            $result
+        );
+
+        $jsonPath = '$.music.bands[0].albums[1].title.length';
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [6],
+            $result
+        );
+    }
+
+    /**
+     * @throws InvalidJsonException
+     */
+    public function testLengthSmartGet()
+    {
+        /** Array Length Test */
+        $jsonPath = '$.music.bands[0].albums.length';
+        $jsonObject = new JsonObject($this->json, true);
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            3,
+            $result
+        );
+
+        /** String Length Test */
+        $jsonPath = '$.music.bands[0].albums[0].length.length';
+        $result = $jsonObject->get($jsonPath, true);
+        $this->assertEquals(
+            5,
+            $result
+        );
+
+        $jsonPath = '$.music.bands[0].albums[1].title.length';
+        $result = $jsonObject->get($jsonPath, true);
+        $this->assertEquals(
+            6,
+            $result
+        );
+    }
+
+    /**
+     * @throws InvalidJsonException
+     */
+    public function testObjectHasField()
+    {
+        $jsonPath = '$.music.length';
+        $jsonObject = new JsonObject($this->json);
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [
+                [
+                    [
+                        'track' => 'Simple Thing',
+                        'stack' => 80
+                    ],
+                    [
+                        'track' => 'Nobody',
+                        'stack' => 90
+                    ]
+                ]
+            ],
+            $result
+        );
+
+        $jsonPath = '$.music.bands[0].albums[0].length';
+        $result = $jsonObject->get($jsonPath);
+        $this->assertEquals(
+            [
+                '46:35'
+            ],
+            $result
+        );
+    }
+
+    /**
      * Validates behaviour described in issue https://github.com/Galbar/JsonPath-PHP/issues/62
      *
      * @throws InvalidJsonException
@@ -326,6 +327,6 @@ class JsonObjectLengthOperatorTest extends \PHPUnit_Framework_TestCase
         $json = '{"box": {"length":[{"locale":null,"scope":null,"data":{"amount":"130.0000","unit":"CENTIMETER"}}]}}';
         $jsonPath = '$.box.length.*.data.amount';
         $jsonObject = new JsonObject($json);
-        $this->assertEquals($jsonObject->get($jsonPath), array("130.0000"));
+        $this->assertEquals($jsonObject->get($jsonPath), ["130.0000"]);
     }
 }
