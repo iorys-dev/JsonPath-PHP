@@ -4,44 +4,42 @@ namespace JsonPath\Expression;
 
 class Contains
 {
-    const SEPARATOR = ',';
+    const string SEPARATOR = ',';
 
-    public static function evaluate(&$root, &$partial, $source, $lookupValue)
+    public static function evaluate(&$root, &$partial, $source, $lookupValue): bool
     {
         $source = Value::evaluate($root, $partial, trim($source));
         $lookupValue = self::prepareList($root, $partial, $lookupValue);
 
         if (is_array($source)) {
-            if (is_array($lookupValue)) {
-                return count(array_intersect($source, $lookupValue)) > 0;
-            } else {
-                return in_array($lookupValue, $source);
-            }
-        }
+            foreach ($lookupValue as $value) {
+                if (is_string($value) && preg_match('/^\/(?<regex>.*)\/(?<flags>[A-Za-z]*)$/', $value, $matches)) {
+                    $pattern = '/' . $matches['regex'] . '/' . $matches['flags'];
 
-        if (is_string($source)) {
-            if (is_array($lookupValue)) {
-                foreach ($lookupValue as $value) {
-                    if (strpos($source, $value) !== false) {
+                    foreach ($source as $sourceValue) {
+                        if (preg_match($pattern, $sourceValue)) {
+                            return true;
+                        }
+                    }
+                } else {
+                    if (in_array($value, $source)) {
                         return true;
                     }
                 }
-            } else {
-                return strpos($source, $lookupValue) !== false;
             }
         }
 
         return false;
     }
 
-    private static function prepareList(&$root, &$partial, $expression)
+    private static function prepareList(&$root, &$partial, $expression): array
     {
-        if (strpos($expression, self::SEPARATOR) === false) {
-            return [Value::evaluate($root, $partial, trim($expression))];
-        }
-
         if (preg_match('/^\[.*]$/', $expression)) {
             $expression = substr($expression, 1, -1);
+        }
+
+        if (!str_contains($expression, self::SEPARATOR)) {
+            return [Value::evaluate($root, $partial, trim($expression))];
         }
 
         return array_map(

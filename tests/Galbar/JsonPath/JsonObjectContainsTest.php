@@ -73,7 +73,7 @@ class JsonObjectContainsTest extends TestCase
     /**
      * @throws InvalidJsonException
      */
-    public function testFilterInArray()
+    public function testFilterContains()
     {
         $jsonObject = new JsonObject(($this->json));
         $result = $jsonObject->get('$.store.models[?(@.currencies contains "USD")]');
@@ -95,7 +95,7 @@ class JsonObjectContainsTest extends TestCase
     /**
      * @throws InvalidJsonException
      */
-    public function testFilterInArrayWithMultipleValues()
+    public function testFilterContainsWithMultipleValues()
     {
         $jsonObject = new JsonObject(($this->json));
         $result = $jsonObject->get('$.store.models[?(@.currencies contains [$.store.base, "GBP"])]');
@@ -112,6 +112,111 @@ class JsonObjectContainsTest extends TestCase
                 [
                     'id' => 108,
                     'currencies' => ['GBP']
+                ],
+            ],
+            $result
+        );
+    }
+
+    public function testFilterContainsWithSingleValueFromArray()
+    {
+        $jsonObject = new JsonObject('{
+            "store": [
+                { "test": {"values": ["a", "b"]} },
+                { "test": {"values": ["cav", "b"]} },
+                { "test": {"values": ["c", "b"]} },
+                { "test": {"values": ["d", "b"]} }
+            ]
+        }');
+        $result = $jsonObject->get('$.store[?(@.test.values contains ["a"])]');
+        $this->assertEquals(
+            [
+                [
+                    'test' => ['values' => ['a', 'b']]
+                ],
+            ],
+            $result
+        );
+    }
+
+    public function testFilterContainsWithMultipleValuesFromArray()
+    {
+        $jsonObject = new JsonObject('{
+            "store": [
+                { "test": {"values": ["a", "b"]} },
+                { "test": {"values": ["cav", "b"]} },
+                { "test": {"values": ["c", "b"]} },
+                { "test": {"values": ["d", "b"]} }
+            ]
+        }');
+        $result = $jsonObject->get('$.store[?(@.test.values contains ["c", "d"])]');
+        $this->assertEquals(
+            [
+                [
+                    'test' => ['values' => ['c', 'b']]
+                ],
+                [
+                    'test' => ['values' => ['d', 'b']]
+                ],
+            ],
+            $result
+        );
+    }
+
+    public function testFilterContainsScalar()
+    {
+        $jsonObject = new JsonObject('[{"test": [1,2,3,123,234,345]}, {"test": ["a","b","c"]}]');
+        $result = $jsonObject->get('$[?(@.test contains 123)]');
+        $this->assertEquals(
+            [
+                ['test' => [1, 2, 3, 123, 234, 345]],
+            ],
+            $result
+        );
+    }
+
+    public function testFilterContainsFromArraySingle()
+    {
+        $jsonObject = new JsonObject('[{"test": [1,2,3,123,234,345]}, {"test": ["a","b","c"]}]');
+        $result = $jsonObject->get('$[?(@.test contains [123])]');
+        $this->assertEquals(
+            [
+                ['test' => [1, 2, 3, 123, 234, 345]],
+            ],
+            $result
+        );
+    }
+
+    public function testFilterContainsFromArrayMultiple()
+    {
+        $jsonObject = new JsonObject('[{"test": [1,2,3,123,234,345]}, {"test": ["a","b","c"]}, {"test": ["a","b","c","d"]}]');
+        $result = $jsonObject->get('$[?(@.test contains [123, "d"])]');
+        $this->assertEquals(
+            [
+                ['test' => [1, 2, 3, 123, 234, 345]],
+                ['test' => ['a', 'b', 'c', 'd']],
+            ],
+            $result
+        );
+    }
+
+    public function testFilterContainsRegex(){
+        $jsonObject = new JsonObject('{
+            "store": [
+                { "test": {"values": ["a", "b"]} },
+                { "test": {"values": ["cav", "b"]} },
+                { "test": {"values": ["c", "b"]} },
+                { "test": {"values": ["d", "b"]} }
+            ]
+        }');
+        $result = $jsonObject->get('$.store[?(@.test.values contains /a/)]');
+        $this->assertEquals(
+            [
+                [
+                    'test' => ['values' => ['a', 'b']]
+                ],
+                [
+                    'test' => ['values' => ['cav', 'b']]
                 ],
             ],
             $result
